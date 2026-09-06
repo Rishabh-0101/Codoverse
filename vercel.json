@@ -1,12 +1,9 @@
-{
+﻿{
   "framework": null,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
-    {
-  "framework": null, "source": "/api/(.*)", "destination": "/api/$1" },
-    {
-  "framework": null, "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
-
