@@ -7,20 +7,20 @@ import "express-async-errors";
 import express from "express";
 import cors from "cors";
 
-import authRoutes from "./routes/auth.js";
-import oauthRoutes from "./routes/oauth.js";
-import profileRoutes from "./routes/profile.js";
-import platformsRoutes from "./routes/platforms.js";
-import notesRoutes from "./routes/notes.js";
-import sheetsRoutes from "./routes/sheets.js";
-import companyRoutes from "./routes/company.js";
-import discoverRoutes from "./routes/discover.js";
-import contestHistoryRoutes from "./routes/contestHistory.js";
-import accountRoutes from "./routes/account.js";
-import analyzeRoutes from "./routes/analyze.js";
-import syncRoutes from "./routes/sync.js";
-import publicRoutes from "./routes/public.js";
-import compareRoutes from "./routes/compare.js";
+import authRoutes from "../server/routes/auth.js";
+import oauthRoutes from "../server/routes/oauth.js";
+import profileRoutes from "../server/routes/profile.js";
+import platformsRoutes from "../server/routes/platforms.js";
+import notesRoutes from "../server/routes/notes.js";
+import sheetsRoutes from "../server/routes/sheets.js";
+import companyRoutes from "../server/routes/company.js";
+import discoverRoutes from "../server/routes/discover.js";
+import contestHistoryRoutes from "../server/routes/contestHistory.js";
+import accountRoutes from "../server/routes/account.js";
+import analyzeRoutes from "../server/routes/analyze.js";
+import syncRoutes from "../server/routes/sync.js";
+import publicRoutes from "../server/routes/public.js";
+import compareRoutes from "../server/routes/compare.js";
 
 // Without these, a single unexpected error anywhere (e.g. a network hiccup
 // talking to GitHub/LeetCode/Codeforces/CodeChef during sync) can crash the
