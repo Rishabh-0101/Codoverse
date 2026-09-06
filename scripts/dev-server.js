@@ -11,7 +11,7 @@ dotenv.config();
 // including the database module) BEFORE dotenv.config() above ever runs —
 // so process.env.POSTGRES_URL would still be empty at that point no
 // matter what's in .env. This was a real bug, found by testing.
-const { default: app } = await import("./api/index.js");
+const { default: app } = await import("../api/index.js");
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Codoverse API running locally on http://localhost:${PORT}`));

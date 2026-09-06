@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:api": "node --watch server.js",
+    "dev:api": "node --watch scripts/dev-server.js",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "cd frontend && npm install && npm run build",
     "vercel-build": "cd frontend && npm install && npm run build"
