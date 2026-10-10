@@ -36,22 +36,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/health", (req, res) => res.json({ ok: true, name: "Codoverse API" }));
+app.get(["/api/health", "/health"], (req, res) => res.json({ ok: true, name: "Codoverse API" }));
 
-app.use("/api/auth", authRoutes);
-app.use("/api/auth", oauthRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/platforms", platformsRoutes);
-app.use("/api/notes", notesRoutes);
-app.use("/api/sheets", sheetsRoutes);
-app.use("/api/company-kit", companyRoutes);
-app.use("/api/discover", discoverRoutes);
-app.use("/api/contest-history", contestHistoryRoutes);
-app.use("/api/account", accountRoutes);
-app.use("/api/analyze-repo", analyzeRoutes);
-app.use("/api/sync", syncRoutes);
-app.use("/api/public", publicRoutes);
-app.use("/api/compare", compareRoutes);
+app.use(["/api/auth", "/auth"], authRoutes);
+app.use(["/api/auth", "/auth"], oauthRoutes);
+app.use(["/api/profile", "/profile"], profileRoutes);
+app.use(["/api/platforms", "/platforms"], platformsRoutes);
+app.use(["/api/notes", "/notes"], notesRoutes);
+app.use(["/api/sheets", "/sheets"], sheetsRoutes);
+app.use(["/api/company-kit", "/company-kit"], companyRoutes);
+app.use(["/api/discover", "/discover"], discoverRoutes);
+app.use(["/api/contest-history", "/contest-history"], contestHistoryRoutes);
+app.use(["/api/account", "/account"], accountRoutes);
+app.use(["/api/analyze-repo", "/analyze-repo"], analyzeRoutes);
+app.use(["/api/sync", "/sync"], syncRoutes);
+app.use(["/api/public", "/public"], publicRoutes);
+app.use(["/api/compare", "/compare"], compareRoutes);
 
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 // eslint-disable-next-line no-unused-vars

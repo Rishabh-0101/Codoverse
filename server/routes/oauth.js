@@ -7,8 +7,27 @@ import { makeToken, seedNewAccountData } from "./auth.js";
 const router = Router();
 // Read lazily (not at module-load time) — see the comment in
 // api/lib/store.js for why a top-level `process.env` read is fragile.
-function frontendUrl() {
+function frontendUrl(req) {
+  if (process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes("localhost")) {
+    return process.env.FRONTEND_URL;
+  }
+  if (req && req.headers && req.headers.host && !req.headers.host.includes("localhost")) {
+    const proto = req.headers["x-forwarded-proto"] || "https";
+    return `${proto}://${req.headers.host}`;
+  }
   return process.env.FRONTEND_URL || "http://localhost:5173";
+}
+
+function getCallbackUrl(req, envVar, defaultPath) {
+  const envVal = process.env[envVar];
+  if (envVal && !envVal.includes("localhost")) {
+    return envVal;
+  }
+  if (req && req.headers && req.headers.host && !req.headers.host.includes("localhost")) {
+    const proto = req.headers["x-forwarded-proto"] || "https";
+    return `${proto}://${req.headers.host}${defaultPath}`;
+  }
+  return envVal || `http://localhost:3000${defaultPath}`;
 }
 
 async function findOrCreateUser({ email, name }) {
@@ -38,7 +57,7 @@ router.get("/github", (req, res) => {
   if (!process.env.GITHUB_OAUTH_CLIENT_ID) {
     return res.status(500).send("GitHub sign-in isn't configured yet. Add GITHUB_OAUTH_CLIENT_ID / SECRET as environment variables.");
   }
-  const redirectUri = process.env.GITHUB_OAUTH_CALLBACK_URL || "http://localhost:3000/api/auth/github/callback";
+  const redirectUri = getCallbackUrl(req, "GITHUB_OAUTH_CALLBACK_URL", "/api/auth/github/callback");
   const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_OAUTH_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=read:user user:email`;
   res.redirect(url);
 });
@@ -46,7 +65,7 @@ router.get("/github", (req, res) => {
 router.get("/github/callback", async (req, res) => {
   try {
     const { code } = req.query;
-    const redirectUri = process.env.GITHUB_OAUTH_CALLBACK_URL || "http://localhost:3000/api/auth/github/callback";
+    const redirectUri = getCallbackUrl(req, "GITHUB_OAUTH_CALLBACK_URL", "/api/auth/github/callback");
 
     const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
@@ -79,10 +98,10 @@ router.get("/github/callback", async (req, res) => {
     }
 
     const jwtToken = makeToken(user.id);
-    res.redirect(`${frontendUrl()}/oauth/callback?token=${jwtToken}`);
+    res.redirect(`${frontendUrl(req)}/oauth/callback?token=${jwtToken}`);
   } catch (err) {
     console.error("GitHub OAuth failed:", err);
-    res.redirect(`${frontendUrl()}/login?error=${encodeURIComponent(err.message)}`);
+    res.redirect(`${frontendUrl(req)}/login?error=${encodeURIComponent(err.message)}`);
   }
 });
 
@@ -91,7 +110,7 @@ router.get("/google", (req, res) => {
   if (!process.env.GOOGLE_OAUTH_CLIENT_ID) {
     return res.status(500).send("Google sign-in isn't configured yet. Add GOOGLE_OAUTH_CLIENT_ID / SECRET as environment variables.");
   }
-  const redirectUri = process.env.GOOGLE_OAUTH_CALLBACK_URL || "http://localhost:3000/api/auth/google/callback";
+  const redirectUri = getCallbackUrl(req, "GOOGLE_OAUTH_CALLBACK_URL", "/api/auth/google/callback");
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
     redirect_uri: redirectUri,
@@ -105,7 +124,7 @@ router.get("/google", (req, res) => {
 router.get("/google/callback", async (req, res) => {
   try {
     const { code } = req.query;
-    const redirectUri = process.env.GOOGLE_OAUTH_CALLBACK_URL || "http://localhost:3000/api/auth/google/callback";
+    const redirectUri = getCallbackUrl(req, "GOOGLE_OAUTH_CALLBACK_URL", "/api/auth/google/callback");
 
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -129,10 +148,10 @@ router.get("/google/callback", async (req, res) => {
 
     const user = await findOrCreateUser({ email: profile.email, name: profile.name });
     const jwtToken = makeToken(user.id);
-    res.redirect(`${frontendUrl()}/oauth/callback?token=${jwtToken}`);
+    res.redirect(`${frontendUrl(req)}/oauth/callback?token=${jwtToken}`);
   } catch (err) {
     console.error("Google OAuth failed:", err);
-    res.redirect(`${frontendUrl()}/login?error=${encodeURIComponent(err.message)}`);
+    res.redirect(`${frontendUrl(req)}/login?error=${encodeURIComponent(err.message)}`);
   }
 });
 
